@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image and Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0; 
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            /* text-align: center; */
+        }
+
+        .bd {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .default-image {
+            min-width: 150px;
+            min-height: 150px;
+            width: auto;
+            height: auto;
+            max-width: 15%;
+            max-height: 15%;
+            display: none;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            /* margin: 0 auto; */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>ระบบแนะนำสถานที่ท่องเที่ยว (Tourist Attraction Recommendation System: TARS)</h2>
+    </header>
+    <div class="bd">
+        <h2>Upload Image and Prediction</h2>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="image">Select an image:</label>
+            <input type="file" id="image" accept="image/*" onchange="makePrediction()">
+            <img id="preview" src="#" alt="Preview" class="default-image">
+            <!-- <img id="preview" src="#" alt="Preview" style="display:none; max-width: 300px; max-height: 300px; min-width: 100px; min-height: 100px;"> -->
+            <div id="result"></div>
+            <br>
+        </form>
+    </div>
+
+    <script>
+        function makePrediction() {
+            var input = document.getElementById('image');
+            var formData = new FormData();
+
+            formData.append('image', input.files[0]);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById('result').innerHTML = 'Predicted Location: ' + data.prediction;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('image').addEventListener('change', function () {
+            var input = this;
+            var preview = document.getElementById('preview');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    </script>
+
+</body>
+</html>
