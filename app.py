@@ -18,7 +18,7 @@ def predict():
         return jsonify({'error': 'No file provided'})
 
     image_file = request.files['image']
-
+    
     if image_file.filename == '':
         return jsonify({'error': 'No selected file'})
 

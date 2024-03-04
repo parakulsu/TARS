@@ -1,28 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image and Prediction</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             margin: 0;
-            padding: 0; 
+            padding: 0;
+            background-color: #f4f4f4;
         }
 
         header {
             background-color: #333;
             color: #fff;
-            padding: 20px;
-            /* text-align: center; */
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-left: 40px;
+            padding-right: 40px;
         }
 
         .bd {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        .page {
+            padding-top: 30px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .page span {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .page span:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        .page span.active {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
+        #uploadPage,
+        #blankPage {
+            display: none;
+            padding: 20px;
+        }
+
+        #uploadPage.active,
+        #blankPage.active {
+            display: block;
+        }
+
+        #dropArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fff;
         }
 
         .default-image {
@@ -35,25 +88,33 @@
             display: none;
             padding-top: 15px;
             padding-bottom: 15px;
-            /* margin: 0 auto; */
         }
+
     </style>
 </head>
+
 <body>
     <header>
-        <h2>ระบบแนะนำสถานที่ท่องเที่ยว (Tourist Attraction Recommendation System: TARS)</h2>
+        <h3>Tourist Attraction Recommendation System (ระบบแนะนำสถานที่ท่องเที่ยว)</h3>
     </header>
     <div class="bd">
-        <h2>Upload Image and Prediction</h2>
-
-        <form id="uploadForm" enctype="multipart/form-data">
-            <label for="image">Select an image:</label>
-            <input type="file" id="image" accept="image/*" onchange="makePrediction()">
-            <img id="preview" src="#" alt="Preview" class="default-image">
-            <!-- <img id="preview" src="#" alt="Preview" style="display:none; max-width: 300px; max-height: 300px; min-width: 100px; min-height: 100px;"> -->
-            <div id="result"></div>
-            <br>
-        </form>
+        <div class="page">
+            <span id="uploadText" onclick="imgPage()" class="active">Image Processing</span>
+            &nbsp;
+            <span id="predictText" onclick="blankPage()">Text</span>
+        </div>
+        <div id="uploadPage" class="active">
+            <h3 style="text-align: center;">Upload Image and Prediction</h3>
+            <div id="dropArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                <p id="dropText">Drag and drop an image file here or click to select one.</p>
+                <input type="file" id="image" accept="image/*" style="display: none;" onchange="handleFileSelect()">
+                <img id="preview" src="#" alt="Preview" class="default-image">
+                <div id="result"></div>
+            </div>
+        </div>
+        <div id="blankPage" class="hidden">
+            <h3>Blank Page</h3>
+        </div>
     </div>
 
     <script>
@@ -61,23 +122,47 @@
             var input = document.getElementById('image');
             var formData = new FormData();
 
-            formData.append('image', input.files[0]);
+            if (input.files.length > 0) {
+                formData.append('image', input.files[0]);
 
-            fetch('/predict', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                document.getElementById('result').innerHTML = 'Predicted Location: ' + data.prediction;
-            })
-            .catch(error => console.error('Error:', error));
+                fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        var predictionResult = data.prediction !== undefined ? data.prediction : 'ไม่สามารถระบุสถานที่ได้';
+                        document.getElementById('result').innerHTML = 'Predicted Location: ' + predictionResult;
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                var predictionResult = data.prediction !== undefined ? data.prediction : 'ไม่ได้เลือกรูปภาพ';
+                document.getElementById('result').innerHTML = 'Predicted Location: ' + predictionResult;
+            }
         }
 
-        document.getElementById('image').addEventListener('change', function () {
-            var input = this;
+        function handleDrop(event) {
+            event.preventDefault();
+            var input = document.getElementById('image');
+            var files = event.dataTransfer.files;
+
+            if (files.length > 0) {
+                input.files = files;
+                previewImage();
+                makePrediction();
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+        }
+
+        function previewImage() {
+            var input = document.getElementById('image');
             var preview = document.getElementById('preview');
+            var dropText = document.getElementById('dropText');
 
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -85,12 +170,36 @@
                 reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    dropText.style.display = 'none';
                 };
 
                 reader.readAsDataURL(input.files[0]);
             }
-        });
-    </script>
+        }
 
+        function handleFileSelect() {
+            previewImage();
+            makePrediction();
+        }
+
+        document.getElementById('dropArea').addEventListener('click', function () {
+            document.getElementById('image').click();
+        });
+
+        function imgPage() {
+            document.getElementById('uploadPage').classList.add('active');
+            document.getElementById('blankPage').classList.remove('active');
+            document.getElementById('uploadText').classList.add('active');
+            document.getElementById('predictText').classList.remove('active');
+        }
+
+        function blankPage() {
+            document.getElementById('uploadPage').classList.remove('active');
+            document.getElementById('blankPage').classList.add('active');
+            document.getElementById('uploadText').classList.remove('active');
+            document.getElementById('predictText').classList.add('active');
+        }
+    </script>
 </body>
+
 </html>
