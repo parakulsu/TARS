@@ -4,3 +4,6 @@ tensorflow==2.13.1
 opencv-python==4.9.0.80
 requests==2.26.0
 numpy>=1.17.0,<1.26.0
+pandas==2.2.1
+pd==0.0.4
+scikit-learn==1.4.1.post1
