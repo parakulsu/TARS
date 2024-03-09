@@ -91,7 +91,6 @@
         }
 
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 
 <body>
@@ -102,7 +101,7 @@
         <div class="page">
             <span id="uploadText" onclick="imgPage()" class="active">Image Processing</span>
             &nbsp;
-            <span id="predictText" onclick="blankPage()">Sentiment Analysis</span>
+            <span id="predictText" onclick="blankPage()">Text</span>
         </div>
         <div id="uploadPage" class="active">
             <h3 style="text-align: center;">Upload Image and Prediction</h3>
@@ -114,49 +113,7 @@
             </div>
         </div>
         <div id="blankPage" class="hidden">
-            <div class="row">
-                <div class="col-6">
-                    <h1>คู่มือการใช้งาน</h1>
-                    <p>หน้านี้จะเป็นการทำนายความรู้สึกจากความคิดเห็นที่ผู้ได้มีการพิมพ์ใส่ในช่องข้อความความ โดยแหล่งข้อมูลที่ใช้ในการวิเคราะห์นั้นมาจากความคิดเห็นจากเว็บไซต์ (Website) ท่องเที่ยว</p>
-                    <ul>
-                        <li>
-                            ใส่ข้อความของคุณในช่องใส่ข้อความโดยจะใส่ได้เฉพาะภาษาไทย
-                        </li>
-                        <li>
-                            ระบบจะทำการวิเคราะห์ความรู้จากข้อความของคุณ
-                        </li>
-                        <li>
-                            ระบบจะแสดงผลลัทธ์ออกมาด้านล่างโดยจะแบ่งความรู้สึกออกเป็น 3 อย่าง ได้แก่
-                            <ul>
-                                <li>
-                                    กลาง
-                                </li>
-                                <li>
-                                    บวก
-                                </li>
-                                <li>
-                                    ลบ
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-6">
-                    <h1>Sentiment Analysis</h1>
-                    <form method="post" action="/" onsubmit="makeSentiment(); return false;">
-                        <label for="user_input">ใส่ข้อความของคุณ:</label>
-                        <!-- <input type="text" id="user_input" name="user_input" required> -->
-                        <input type="text" id="user_input" name="user_input" required pattern="[ก-๙\s]*"
-                            title="กรุณากรอกเฉพาะภาษาไทย">
-        
-                        <button type="submit">ยืนยัน</button>
-                    </form>
-        
-                    <p id="result_text"></p>
-                    <img id="result_icon" src="">
-        
-                </div>
-            </div>
+            <h3>Blank Page</h3>
         </div>
     </div>
 
@@ -242,26 +199,6 @@
             document.getElementById('uploadText').classList.remove('active');
             document.getElementById('predictText').classList.add('active');
         }
-        
-        function makeSentiment() {
-        var input = document.getElementById('user_input');
-        var formData = new FormData();
-
-        formData.append('user_input', input.value);
-
-        fetch('/Sentiment', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                document.getElementById('result_text').innerHTML = 'ผลลัทธ์การวิเคราะห์ความรู้สึก: ' + data.data.sentiment_result.user_input;
-                document.getElementById('result_icon').src = data.data.sentiment_result.icon;
-                console.log(data.data.sentiment_result.icon);
-            })
-            .catch(error => console.error('Error:', error));
-    }
     </script>
 </body>
 
