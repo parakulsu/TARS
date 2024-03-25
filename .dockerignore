@@ -4,4 +4,3 @@ model.keras
 img
 im.py
 RNN.py
-dataset.csv
