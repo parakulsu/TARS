@@ -11,7 +11,7 @@ images = []
 labels = []
 channels = 3
 
-data_dir = r'D:\TARS\img'
+data_dir = r'D:\Project\TARS\img'
 
 for label in os.listdir(data_dir):
     label_path = os.path.join(data_dir, label)
