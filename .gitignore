@@ -6,4 +6,4 @@ __pycache__
 *.sqlite
 *.log
 model.h5
-model.keras
+testdata
