@@ -15,7 +15,7 @@ import tensorflow as tf
 
 app = Flask(__name__)
 
-target_width, target_height = 480, 480
+target_width, target_height = 550, 550
 model = keras.models.load_model('model.h5')
 
 @app.route('/')

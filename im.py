@@ -6,12 +6,12 @@ import os
 import cv2
 import numpy as np
 
-width, height = 480, 480
+width, height = 550, 550
 images = []
 labels = []
 channels = 3
 
-data_dir = r'D:\Project\TARS\img'
+data_dir = r'C:\Users\User\Documents\Bitbucket\TARS2\img'
 
 for label in os.listdir(data_dir):
     label_path = os.path.join(data_dir, label)
@@ -49,6 +49,6 @@ model.add(Dense(64, activation='relu'))
 model.add(Dense(3, activation='softmax'))
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(images, labels, epochs=10)
+model.fit(images, labels, epochs=20)
 
 model.save('model.h5')
