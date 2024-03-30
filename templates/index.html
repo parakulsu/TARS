@@ -218,6 +218,7 @@
                     </form>
 
                     <p id="result_text"></p>
+                    <p id="result_predicted"></p>
                     <img id="result_icon" src="">
 
                 </div>
@@ -322,8 +323,8 @@
                 .then(data => {
                     console.log(data);
                     document.getElementById('result_text').innerHTML = 'ผลลัทธ์การวิเคราะห์ความรู้สึก: ' + data.data.sentiment_result.user_input;
+                    document.getElementById('result_predicted').innerHTML = 'ผลลัทธ์เรียงจาก (กลาง, บวก, ลบ) สูงสุดที่ 1: (' +  data.data.sentiment_result.predicted_result[0] +')';
                     document.getElementById('result_icon').src = data.data.sentiment_result.icon;
-                    console.log(data.data.sentiment_result.icon);
                 })
                 .catch(error => console.error('Error:', error));
         }

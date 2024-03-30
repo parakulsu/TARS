@@ -109,8 +109,8 @@ def sentiment():
         else:
              icon = '/static/images/sad.png'
 
-           
-        sentiment_result = {"user_input": user_input, "icon": icon}
+        predicted_result_rounded = [[round(prob, 2) for prob in result] for result in predicted_result.tolist()]
+        sentiment_result = {"user_input": user_input, "icon": icon, "predicted_result": predicted_result_rounded}
 
         return jsonify({"status": "SUCCESS", "data": {"sentiment_result": sentiment_result}}) 
 
